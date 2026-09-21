@@ -830,13 +830,9 @@ async def cb_cmd_ref_from_gate(cq: CallbackQuery):
 @router.message(Command("contact"))
 @router.callback_query(F.data == "support")
 async def contact_developer(event: Message | CallbackQuery):
-    dev = settings.DEVELOPER_USERNAME or "d91ik"
-    support_id = 6641619062
     text = (
         "🛠️ <b>قسم الدعم الفني والمساعدة</b>\n\n"
-        "مرحباً بك! إذا واجهتك أي مشكلة، أو كان لديك أي استفسار حول البوت، إنشاء وتعديل صفحاتك، أو اشتراك VIP، يمكنك التواصل مع الدعم الفني مباشرة:\n\n"
-        f"👤 <b>حساب الدعم:</b> @{dev}\n"
-        f"🆔 <b>آيدي الدعم (ID):</b> <code>{support_id}</code>\n\n"
+        "مرحباً بك! إذا واجهتك أي مشكلة أو كان لديك أي استفسار حول البوت، أو إنشاء وتعديل صفحاتك، يمكنك التواصل مع الدعم الفني مباشرة.\n\n"
         "اضغط على الزر بالأسفل لفتح المحادثة ومراسلة الدعم فوراً 👇"
     )
     kb = support_kb()

@@ -13,11 +13,11 @@ load_dotenv(ROOT_DIR / ".env", override=True)
 class Settings:
     BOT_TOKEN: str = os.environ.get("BOT_TOKEN", "8855056827:AAE4pTQSH6zCdqOLdSzbZwp1VsEiY2KT25s")
     ADMIN_ID: int = int(os.environ.get("ADMIN_ID", "6641619062"))
-    SECONDARY_ADMIN_USERNAME: str = os.environ.get("SECONDARY_ADMIN_USERNAME", "d91ik").lstrip("@").lower()
+    SECONDARY_ADMIN_USERNAME: str = os.environ.get("SECONDARY_ADMIN_USERNAME", "DRK450").lstrip("@").lower()
     BOT_USERNAME: str = os.environ.get("BOT_USERNAME", "OmniLink2Bot")
     VIP_STARS_PRICE: int = int(os.environ.get("VIP_STARS_PRICE", "500"))
     VIP_USD_PRICE: int = int(os.environ.get("VIP_USD_PRICE", "20"))
-    ADMIN_CONTACT: str = os.environ.get("ADMIN_CONTACT", "@d91ik")
+    ADMIN_CONTACT: str = os.environ.get("ADMIN_CONTACT", "@DRK450")
     WEBAPP_BASE_URL: str = (os.environ.get("RENDER_EXTERNAL_URL") or os.environ.get("WEBAPP_BASE_URL", "http://localhost:8001")).rstrip("/")
     DB_PATH: str = os.environ.get("SQLITE_DB_PATH", str(ROOT_DIR / "data" / "bot_data.db"))
     AVATARS_DIR: str = os.environ.get("AVATARS_DIR", str(ROOT_DIR / "data" / "avatars"))
@@ -44,7 +44,8 @@ class Settings:
     VIP_PRICE_LIFETIME: int = int(os.environ.get("VIP_STARS_PRICE_LIFETIME", "1500"))
 
     # يوزر المطور (للتواصل)
-    DEVELOPER_USERNAME: str = os.environ.get("DEVELOPER_USERNAME", "d91ik").lstrip("@")
+    _dev = os.environ.get("DEVELOPER_USERNAME", "DRK450").lstrip("@")
+    DEVELOPER_USERNAME: str = "DRK450" if _dev.lower() in ("d91ik", "") else _dev
 
     # مكافأة الاشتراك بالقنوات
     CHANNEL_JOIN_REWARD_DAYS: int = int(os.environ.get("CHANNEL_JOIN_REWARD_DAYS", "30"))

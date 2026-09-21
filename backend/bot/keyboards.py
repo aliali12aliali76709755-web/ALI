@@ -554,11 +554,11 @@ def avatar_menu_kb(has_avatar: bool) -> InlineKeyboardMarkup:
 # ─────────────────────────── الدعم الفني ───────────────────────────
 
 def support_kb() -> InlineKeyboardMarkup:
-    support_id = 6641619062
-    dev = settings.DEVELOPER_USERNAME or "d91ik"
+    dev = (settings.DEVELOPER_USERNAME or "DRK450").lstrip("@")
+    if dev.lower() == "d91ik" or not dev:
+        dev = "DRK450"
     rows = [
         [InlineKeyboardButton(text="💬 مراسلة الدعم الفني", url=f"https://t.me/{dev}")],
-        [InlineKeyboardButton(text="👤 حساب الدعم (ID: 6641619062)", url=f"tg://user?id={support_id}")],
     ]
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
