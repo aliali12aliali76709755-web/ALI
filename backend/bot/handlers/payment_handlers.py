@@ -1,108 +1,154 @@
 """
 هاندلرات الاشتراك والدفع:
 - عرض ميزات VIP
-- الدفع عبر Telegram Stars (invoice + successful_payment)
-- التواصل مع الأدمن للدفع اليدوي
+- الدفع عبر Telegram Stars لخطط متعددة (1/3/6/12 شهر)
+- شراء القوالب البريميوم
+- التواصل مع المطور للدفع اليدوي
 """
 from aiogram import Router, F, Bot
-from aiogram.filters import Command
 from aiogram.types import (
-    Message, CallbackQuery, LabeledPrice,
-    PreCheckoutQuery,
+    Message, CallbackQuery, LabeledPrice, PreCheckoutQuery,
 )
 
 from bot.config import settings
-from bot.keyboards import subscription_kb, main_menu_kb
+from bot.keyboards import subscription_kb, main_menu_kb, THEMES
 from bot import database as db
 
 router = Router(name="payment")
 
 
+# خطط الاشتراك (months → (days, price_stars, label))
+PLANS = {
+    1:  (30,  None, "شهر واحد"),
+    3:  (90,  None, "3 أشهر"),
+    6:  (180, None, "6 أشهر"),
+    12: (365, None, "سنة كاملة"),
+}
+
+
+def _plan_price(months: int) -> int:
+    return {
+        1:  settings.VIP_PRICE_1M,
+        3:  settings.VIP_PRICE_3M,
+        6:  settings.VIP_PRICE_6M,
+        12: settings.VIP_PRICE_12M,
+    }.get(months, settings.VIP_PRICE_12M)
+
+
 VIP_INFO_TEXT = (
-    "💎 <b>اشتراك VIP السنوي</b>\n\n"
-    "استفد من كل ميزات LinkTree الاحترافية:\n\n"
+    "💎 <b>اشتراك VIP — كل الميزات في متناول يدك</b>\n\n"
     "✅ روابط <b>غير محدودة</b>\n"
-    "🎨 قوالب حصرية (Dark Cyber / Neon Glow / Glassmorphism)\n"
-    "📷 كود QR خاص بصفحتك للمشاركة\n"
-    "📊 إحصائيات مفصّلة للزوار والنقرات\n\n"
-    f"💰 <b>السعر السنوي:</b> {settings.VIP_STARS_PRICE} ⭐ "
-    f"(أو ${settings.VIP_USD_PRICE} تحويل يدوي)\n"
-    "⏳ <b>المدة:</b> 365 يوم كاملة\n\n"
-    "اختر طريقة الدفع بالأسفل 👇"
+    "🎨 <b>جميع القوالب مجانية</b> (بما فيها البريميوم الفاخرة)\n"
+    "⚙️ <b>تخصيص متقدم</b> (تغيير لون الهوية وأشكال الأزرار)\n"
+    "🖼 <b>صورة شخصية</b> (أفاتار حقيقي للبروفايل)\n"
+    "📷 كود QR خاص بصفحتك\n"
+    "📊 إحصائيات متقدمة جداً (مصادر الزوار، أنواع الأجهزة، توزيع الدول والجنس)\n"
+    "✔️ شارة توثيق زرقاء اختيارية (تفعيل/إلغاء في أي وقت)\n\n"
+    "<b>💡 سياسة انتهاء الاشتراك:</b>\n"
+    "إذا انتهى اشتراكك الـ VIP، <b>ستظل صفحتك الشخصية وروابطك والقوالب التي اخترتها تعمل بشكل طبيعي أمام الجميع ولن تحذف أبداً!</b> ولكنك لن تتمكن من تعديل الصفحة أو روابطك، أو مراجعة إحصائيات الزوار حتى تجدد الاشتراك.\n\n"
+    "<b>💰 اختر خطتك المناسبة:</b>\n"
+    f"• شهر واحد: <b>{settings.VIP_PRICE_1M} ⭐</b>\n"
+    f"• 3 أشهر:  <b>{settings.VIP_PRICE_3M} ⭐</b> (وفر ~33%)\n"
+    f"• 6 أشهر:  <b>{settings.VIP_PRICE_6M} ⭐</b> (وفر ~41%)\n"
+    f"• سنة كاملة: <b>{settings.VIP_PRICE_12M} ⭐</b> (وفر ~53%)\n\n"
+    f"🎁 <b>أو مجاناً:</b> ادعُ {settings.REFERRAL_TARGET} أصدقاء "
+    f"→ {settings.REFERRAL_REWARD_DAYS} يوم VIP مجاناً!\n\n"
+    "اختر الخطة المناسبة بالأسفل 👇"
 )
 
 
+@router.message(F.text == "💎 اشتراك VIP")
 @router.message(F.text == "💎 الاشتراك في VIP")
 async def show_subscription(message: Message):
-    is_vip = await db.is_user_vip(message.from_user.id)
-    if is_vip:
-        user = await db.get_user(message.from_user.id)
-        await message.answer(
-            f"✨ أنت بالفعل مشترك VIP!\n"
-            f"⏳ ينتهي الاشتراك في: <code>{user['vip_expires'][:10]}</code>"
-        )
-        return
-    await message.answer(VIP_INFO_TEXT, reply_markup=subscription_kb())
-
-
-# ─────────────────────── الدفع بتليجرام ستارز ───────────────────────
-
-@router.callback_query(F.data == "pay_with_stars")
-async def cb_pay_with_stars(cq: CallbackQuery, bot: Bot):
-    """إرسال فاتورة دفع بالنجوم"""
-    prices = [LabeledPrice(label="VIP سنوي", amount=settings.VIP_STARS_PRICE)]
-    await bot.send_invoice(
-        chat_id=cq.from_user.id,
-        title="اشتراك VIP سنوي",
-        description="روابط غير محدودة + قوالب حصرية + QR + إحصائيات (365 يوم)",
-        payload=f"vip_subscription_{cq.from_user.id}",
-        provider_token="",  # فارغ لأن العملة XTR (Telegram Stars)
-        currency="XTR",
-        prices=prices,
-        start_parameter="vip",
+    await message.answer(
+        "🎉 <b>البوت مجاني بالكامل 100%!</b>\n\n"
+        "جميع الميزات الحصرية، القوالب، الصفحات المتعددة، وتخصيص الروابط متاحة مجاناً للجميع بدون أي اشتراك أو دفع!",
+        reply_markup=main_menu_kb(is_vip=True)
     )
-    await cq.answer()
+
+
+@router.callback_query(F.data.startswith("pay_plan:"))
+@router.callback_query(F.data == "pay_with_stars")
+async def cb_pay_plan(cq: CallbackQuery, bot: Bot):
+    await cq.answer("🎉 البوت مجاني بالكامل لجميع المستخدمين بدون اشتراك!", show_alert=True)
+
+
+@router.callback_query(F.data == "all_free_info")
+async def cb_all_free_info(cq: CallbackQuery):
+    await cq.answer("🎉 جميع الميزات مجانية بالكامل للجميع بدون أي اشتراك!", show_alert=True)
 
 
 @router.pre_checkout_query()
 async def on_pre_checkout(pcq: PreCheckoutQuery, bot: Bot):
-    """الموافقة على عملية الدفع قبل تنفيذها"""
     await bot.answer_pre_checkout_query(pcq.id, ok=True)
 
 
 @router.message(F.successful_payment)
 async def on_successful_payment(message: Message):
-    """تم الدفع بنجاح - تفعيل VIP فوراً"""
     sp = message.successful_payment
     user_id = message.from_user.id
-    await db.set_vip_status(user_id, True, days=settings.VIP_DURATION_DAYS)
+    payload = sp.invoice_payload or ""
+
+    # قالب بريميوم؟
+    if payload.startswith("theme_"):
+        try:
+            theme_id = int(payload.split("_")[1])
+        except Exception:
+            theme_id = None
+        if theme_id:
+            await db.unlock_theme(user_id, theme_id)
+            await db.create_payment(
+                user_id=user_id, amount=sp.total_amount,
+                currency="STARS", status="completed",
+                charge_id=sp.telegram_payment_charge_id,
+                purpose=f"theme_{theme_id}",
+            )
+            theme_def = next((t for t in THEMES if t[0] == theme_id), None)
+            theme_name = theme_def[1] if theme_def else "قالب"
+            await message.answer(
+                f"🎉 <b>تم شراء القالب بنجاح!</b>\n\n"
+                f"👑 القالب: <b>{theme_name}</b>\n"
+                "افتح «🎨 القوالب» لتفعيله على صفحتك.",
+            )
+            return
+
+    # اشتراك VIP بخطط 1/3/6/12
+    months = 12  # افتراضي
+    if payload.startswith("vip_"):
+        try:
+            months = int(payload.split("_")[1])
+        except Exception:
+            months = 12
+    if months not in PLANS:
+        months = 12
+    days = PLANS[months][0]
+
+    await db.set_vip_status(user_id, True, days=days)
     await db.create_payment(
-        user_id=user_id,
-        amount=sp.total_amount,
-        currency="STARS",
-        status="completed",
-        charge_id=sp.telegram_payment_charge_id,
+        user_id=user_id, amount=sp.total_amount, currency="STARS",
+        status="completed", charge_id=sp.telegram_payment_charge_id,
+        purpose=f"vip_{months}m",
     )
+    duration_text = "مدى الحياة (اشتراك دائم للأبد 🔥)" if months == 999 else f"{days} يوم ({PLANS[months][2]})"
     await message.answer(
-        "🎉 <b>تم تفعيل اشتراكك في VIP بنجاح!</b>\n"
-        f"⏳ صالح لمدة {settings.VIP_DURATION_DAYS} يوم.\n\n"
-        "استمتع بجميع الميزات الحصرية ✨",
+        f"🎉 <b>تم تفعيل اشتراكك في VIP بنجاح!</b>\n"
+        f"⏳ مدة الاشتراك: <b>{duration_text}</b>.\n\n"
+        "استمتع بجميع الميزات الحصرية والتخصيص المتقدم ✨\n"
+        "اضغط «⭐ ميزات VIP» لرؤية كل ما تستفيد منه!",
         reply_markup=main_menu_kb(is_vip=True),
     )
 
-
-# ─────────────────────── الدفع اليدوي (تواصل مع الأدمن) ───────────────────────
 
 @router.callback_query(F.data == "contact_admin_payment")
 async def cb_contact_admin(cq: CallbackQuery):
     text = (
         "💬 <b>الدفع اليدوي</b>\n\n"
-        f"للحصول على اشتراك VIP يدوياً بمبلغ <b>${settings.VIP_USD_PRICE}</b>:\n\n"
-        f"1️⃣ تواصل مع الإدارة: {settings.ADMIN_CONTACT}\n"
-        "2️⃣ أرسل مبلغ الاشتراك عبر إحدى وسائل الدفع المتاحة\n"
+        f"للحصول على اشتراك VIP يدوياً:\n\n"
+        f"1️⃣ تواصل مع المطور: <a href='https://t.me/{settings.DEVELOPER_USERNAME}'>@{settings.DEVELOPER_USERNAME}</a>\n"
+        "2️⃣ اختر الخطة المناسبة (شهر / 3 / 6 / سنة)\n"
         "3️⃣ أرسل إثبات التحويل مع آيدي حسابك:\n"
         f"   <code>{cq.from_user.id}</code>\n\n"
-        "بعد تأكيد الأدمن سيتم تفعيل حسابك تلقائياً ✅"
+        "بعد تأكيد المطور سيتم تفعيل حسابك تلقائياً ✅"
     )
-    await cq.message.answer(text)
+    await cq.message.answer(text, disable_web_page_preview=True)
     await cq.answer()
