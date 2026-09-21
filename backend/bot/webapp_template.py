@@ -362,6 +362,175 @@ THEME_STYLES = {
         .btn:hover { background: rgba(255,255,255,0.95) !important; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
         .social-icons-bar a { background: rgba(255,255,255,0.8); color: #0e3046; }
     """,
+    # Theme 24: Telegram Emerald (exact match to user Image 1)
+    24: """
+        :root {
+            --bg: #558740; --card: rgba(255, 255, 255, 0.94); --text: #1a3311; --muted: #4a683e;
+            --btn-bg: #ffffff; --btn-bg-hover: #f0f7ec; --btn-text: #2d5a1e;
+            --accent: #25D366; --shadow: 0 4px 18px rgba(0,0,0,0.08); --avatar-ring: #ffffff;
+        }
+        body {
+            background-color: #558740;
+            background-image: 
+                radial-gradient(1000px 600px at 50% 10%, rgba(132, 189, 100, 0.35), transparent 70%),
+                radial-gradient(800px 500px at 50% 90%, rgba(55, 95, 38, 0.45), transparent 70%),
+                url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27140%27%20height%3D%27140%27%20viewBox%3D%270%200%20140%20140%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.5%27%20stroke-opacity%3D%270.18%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M15%2035L45%2015L28%2050L24%2038L38%2025L23%2036Z%27/%3E%3Cpath%20d%3D%27M75%2018c-5%200-9%203-9%208%200%203%202%206%206%207l-2%206%206-3c2%200%204-1%205-2%203-2%206-5%206-8%200-5-6-8-12-8z%27/%3E%3Cpolygon%20points%3D%27115%2C18%20117%2C24%20123%2C24%20118%2C28%20120%2C34%20115%2C30%20110%2C34%20112%2C28%20107%2C24%20113%2C24%27/%3E%3Cpath%20d%3D%27M20%2085h16v12c0%204-4%208-8%208s-8-4-8-8zM36%2089h4c2%200%203%201%203%203s-1%203-3%203h-4%27/%3E%3Cpath%20d%3D%27M75%2088c-4-8-16-4-16%206%200%208%2016%2018%2016%2018s16-10%2016-18c0-10-12-14-16-6z%27/%3E%3Crect%20x%3D%27100%27%20y%3D%2785%27%20width%3D%2726%27%20height%3D%2716%27%20rx%3D%275%27/%3E%3Ccircle%20cx%3D%27106%27%20cy%3D%2793%27%20r%3D%271.5%27/%3E%3Ccircle%20cx%3D%27120%27%20cy%3D%2793%27%20r%3D%271.5%27/%3E%3C/g%3E%3C/svg%3E");
+            background-size: auto, auto, 140px 140px;
+            background-attachment: fixed;
+        }
+        .card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .btn {
+            background: #ffffff !important; color: #1e3f14 !important;
+            border-radius: 18px !important; border: 1px solid rgba(255,255,255,0.7) !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06); font-weight: 700;
+        }
+        .btn:hover { background: #f3faf0 !important; transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.12); }
+        .social-icons-bar a { background: #ffffff; color: #1e3f14; border: 1px solid rgba(255,255,255,0.8); }
+    """,
+    # Theme 25: Cyan Mesh Glow (exact match to user Image 2)
+    25: """
+        :root {
+            --bg: #0077b6; --card: rgba(255, 255, 255, 0.18); --text: #ffffff; --muted: #d0f0fd;
+            --btn-bg: rgba(255, 255, 255, 0.25); --btn-bg-hover: rgba(255, 255, 255, 0.4);
+            --btn-text: #ffffff; --accent: #00f0ff; --shadow: 0 8px 32px rgba(0, 50, 100, 0.25); --avatar-ring: #00f0ff;
+        }
+        body {
+            background-color: #03045e;
+            background-image: 
+                radial-gradient(at 10% 15%, #00b4d8 0px, transparent 65%),
+                radial-gradient(at 90% 85%, #0077b6 0px, transparent 60%),
+                radial-gradient(at 50% 50%, #48cae4 0px, transparent 55%),
+                radial-gradient(at 80% 10%, #90e0ef 0px, transparent 50%),
+                linear-gradient(180deg, #0096c7 0%, #03045e 100%);
+            background-attachment: fixed;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 10px 40px rgba(0, 20, 60, 0.2);
+        }
+        .btn {
+            background: rgba(255, 255, 255, 0.22) !important; color: #ffffff !important;
+            border-radius: 20px !important; border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); font-weight: 700;
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.35) !important;
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
+        }
+        .social-icons-bar a { background: rgba(255, 255, 255, 0.25); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.4); }
+    """,
+    # Theme 26: Sunset Coral Mesh
+    26: """
+        :root {
+            --bg: #ff6b6b; --card: rgba(255, 255, 255, 0.2); --text: #ffffff; --muted: #ffe3e3;
+            --btn-bg: rgba(255, 255, 255, 0.88); --btn-bg-hover: #ffffff;
+            --btn-text: #b82d38; --accent: #ffd166; --shadow: 0 8px 30px rgba(180, 40, 60, 0.25); --avatar-ring: #ffd166;
+        }
+        body {
+            background: 
+                radial-gradient(at 15% 20%, #ff9a8b 0%, transparent 60%),
+                radial-gradient(at 85% 30%, #ff6a88 0%, transparent 60%),
+                radial-gradient(at 50% 80%, #a18cd1 0%, transparent 65%),
+                linear-gradient(135deg, #f7797d 0%, #FBD786 50%, #C6FFDD 100%);
+            background-attachment: fixed;
+        }
+        .card { backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); }
+        .btn {
+            background: rgba(255, 255, 255, 0.9) !important; color: #a12330 !important;
+            border-radius: 16px !important; font-weight: 700;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+        }
+        .btn:hover { background: #ffffff !important; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.18); }
+    """,
+    # Theme 27: Velvet Nebula
+    27: """
+        :root {
+            --bg: #0f0c29; --card: rgba(36, 20, 64, 0.6); --text: #f3e8ff; --muted: #c084fc;
+            --btn-bg: linear-gradient(135deg, #7928ca, #ff0080);
+            --btn-bg-hover: linear-gradient(135deg, #ff0080, #7928ca);
+            --btn-text: #ffffff; --accent: #e879f9; --shadow: 0 8px 30px rgba(121, 40, 202, 0.35); --avatar-ring: #e879f9;
+        }
+        body {
+            background: 
+                radial-gradient(at 20% 20%, rgba(121, 40, 202, 0.45) 0%, transparent 60%),
+                radial-gradient(at 80% 80%, rgba(255, 0, 128, 0.35) 0%, transparent 60%),
+                linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background-attachment: fixed;
+        }
+        .card { border: 1px solid rgba(216, 180, 254, 0.25); backdrop-filter: blur(20px); }
+        .btn { background: var(--btn-bg); color: #ffffff !important; border-radius: 16px !important; font-weight: 700; box-shadow: var(--shadow); }
+        .btn:hover { background: var(--btn-bg-hover); transform: translateY(-2px); }
+    """,
+    # Theme 28: Arabian Arabesque
+    28: """
+        :root {
+            --bg: #081c15; --card: rgba(13, 43, 33, 0.75); --text: #e6fcf5; --muted: #d4af37;
+            --btn-bg: linear-gradient(135deg, #1b4332, #2d6a4f);
+            --btn-bg-hover: linear-gradient(135deg, #2d6a4f, #1b4332);
+            --btn-text: #f3eed9; --accent: #d4af37; --shadow: 0 8px 30px rgba(0,0,0,0.35); --avatar-ring: #d4af37;
+        }
+        body {
+            background-color: #081c15;
+            background-image: 
+                radial-gradient(1000px 500px at 50% 10%, rgba(212, 175, 55, 0.15), transparent 70%),
+                url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27100%27%20height%3D%27100%27%20viewBox%3D%270%200%20100%20100%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23d4af37%27%20stroke-width%3D%271%27%20stroke-opacity%3D%270.18%27%3E%3Crect%20x%3D%2730%27%20y%3D%2730%27%20width%3D%2740%27%20height%3D%2740%27%20transform%3D%27rotate(45%2050%2050)%27/%3E%3Crect%20x%3D%2730%27%20y%3D%2730%27%20width%3D%2740%27%20height%3D%2740%27/%3E%3Cpath%20d%3D%27M0%2050L50%200M50%20100L100%2050M0%2050L50%20100M50%200L100%2050%27/%3E%3C/g%3E%3C/svg%3E");
+            background-size: auto, 100px 100px;
+            background-attachment: fixed;
+        }
+        .card { border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .btn {
+            background: rgba(27, 67, 50, 0.8) !important; color: #fdfaf0 !important;
+            border-radius: 14px !important; border: 1px solid rgba(212, 175, 55, 0.4) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        }
+        .btn:hover { background: rgba(45, 106, 79, 0.95) !important; border-color: #d4af37 !important; transform: translateY(-2px); }
+    """,
+    # Theme 29: Esports Cyber
+    29: """
+        :root {
+            --bg: #090a0f; --card: rgba(18, 20, 29, 0.85); --text: #ffffff; --muted: #8b9bb4;
+            --btn-bg: #131722; --btn-bg-hover: #1c2233; --btn-text: #00ffcc;
+            --accent: #ff0055; --shadow: 0 8px 30px rgba(255, 0, 85, 0.2); --avatar-ring: #00ffcc;
+        }
+        body {
+            background-color: #090a0f;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(255, 0, 85, 0.2) 0%, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(0, 255, 204, 0.2) 0%, transparent 50%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px);
+            background-attachment: fixed;
+        }
+        .card { border: 1px solid rgba(255, 0, 85, 0.3); border-radius: 16px; }
+        .btn {
+            background: #131722 !important; color: #00ffcc !important;
+            border-radius: 8px !important; border: 1px solid rgba(0, 255, 204, 0.3) !important;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn:hover { border-color: #ff0055 !important; color: #ffffff !important; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 0, 85, 0.35); }
+    """,
+    # Theme 30: Pastel Mint
+    30: """
+        :root {
+            --bg: #e8f5e9; --card: rgba(255, 255, 255, 0.7); --text: #1b4332; --muted: #52796f;
+            --btn-bg: #ffffff; --btn-bg-hover: #f1f8f5; --btn-text: #1b4332;
+            --accent: #2d6a4f; --shadow: 0 4px 20px rgba(0,0,0,0.04); --avatar-ring: #b7e4c7;
+        }
+        body {
+            background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 50%, #95d5b2 100%);
+            background-attachment: fixed;
+        }
+        .card { backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.6); }
+        .btn {
+            background: #ffffff !important; color: #1b4332 !important;
+            border-radius: 20px !important; border: 1px solid rgba(255,255,255,0.9) !important;
+            font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+    """,
 }
 
 FONT_MAP = {
@@ -823,12 +992,55 @@ def render_page(user: Dict[str, Any], links: List[Dict[str, Any]], reviews: List
         }}
         {theme_css}
         
-        /* Canvas Effects */
-        #bgCanvas, #particleCanvas {{
+        /* Canvas & Background Pattern Effects */
+        #bgCanvas, #particleCanvas, #bgPattern {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 0;
-        }}
-        #particleCanvas {{ z-index: 99; }}
+            pointer-events: none;
+        }
+        #bgPattern { z-index: 0; background-attachment: fixed; }
+        #bgCanvas { z-index: 1; }
+        #particleCanvas { z-index: 99; }
+
+        /* Background Pattern Styles */
+        .bg-pattern-none { display: none; }
+        .bg-pattern-tg_doodles {
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27140%27%20height%3D%27140%27%20viewBox%3D%270%200%20140%20140%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.5%27%20stroke-opacity%3D%270.18%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M15%2035L45%2015L28%2050L24%2038L38%2025L23%2036Z%27/%3E%3Cpath%20d%3D%27M75%2018c-5%200-9%203-9%208%200%203%202%206%206%207l-2%206%206-3c2%200%204-1%205-2%203-2%206-5%206-8%200-5-6-8-12-8z%27/%3E%3Cpolygon%20points%3D%27115%2C18%20117%2C24%20123%2C24%20118%2C28%20120%2C34%20115%2C30%20110%2C34%20112%2C28%20107%2C24%20113%2C24%27/%3E%3Cpath%20d%3D%27M20%2085h16v12c0%204-4%208-8%208s-8-4-8-8zM36%2089h4c2%200%203%201%203%203s-1%203-3%203h-4%27/%3E%3Cpath%20d%3D%27M75%2088c-4-8-16-4-16%206%200%208%2016%2018%2016%2018s16-10%2016-18c0-10-12-14-16-6z%27/%3E%3Crect%20x%3D%27100%27%20y%3D%2785%27%20width%3D%2726%27%20height%3D%2716%27%20rx%3D%275%27/%3E%3Ccircle%20cx%3D%27106%27%20cy%3D%2793%27%20r%3D%271.5%27/%3E%3Ccircle%20cx%3D%27120%27%20cy%3D%2793%27%20r%3D%271.5%27/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 140px 140px;
+            opacity: 0.85;
+        }
+        .bg-pattern-arabic_art {
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27120%27%20height%3D%27120%27%20viewBox%3D%270%200%20120%20120%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.2%27%20stroke-opacity%3D%270.16%27%3E%3Crect%20x%3D%2735%27%20y%3D%2735%27%20width%3D%2750%27%20height%3D%2750%27%20transform%3D%27rotate(45%2060%2060)%27/%3E%3Crect%20x%3D%2735%27%20y%3D%2735%27%20width%3D%2750%27%20height%3D%2750%27/%3E%3Cpath%20d%3D%27M0%2060L60%200M60%20120L120%2060M0%2060L60%20120M60%200L120%2060M60%2020L100%2060L60%20100L20%2060Z%27/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 120px 120px;
+            opacity: 0.9;
+        }
+        .bg-pattern-contour_lines {
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27200%27%20height%3D%27200%27%20viewBox%3D%270%200%20200%20200%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.4%27%20stroke-opacity%3D%270.15%27%3E%3Cpath%20d%3D%27M-20%2060Q40%2020%20100%2060T220%2060M-20%20100Q50%2060%20110%20100T220%20100M-20%20140Q30%20110%2090%20140T220%20140M-20%2020Q60%20-10%20120%2020T220%2020M-20%20180Q70%20150%20130%20180T220%20180%27/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            opacity: 0.85;
+        }
+        .bg-pattern-gaming_icons {
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27140%27%20height%3D%27140%27%20viewBox%3D%270%200%20140%20140%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.5%27%20stroke-opacity%3D%270.18%27%3E%3Crect%20x%3D%2715%27%20y%3D%2725%27%20width%3D%2740%27%20height%3D%2724%27%20rx%3D%278%27/%3E%3Cpath%20d%3D%27M25%2037h8M29%2033v8M45%2035h.01M49%2039h.01%27/%3E%3Cpath%20d%3D%27M85%2025h30v15c0%208-7%2015-15%2015s-15-7-15-15zM85%2030H80M115%2030h5M100%2055v10M90%2065h20%27/%3E%3Cpolygon%20points%3D%2735%2C90%2040%2C80%2045%2C90%2035%2C90%27/%3E%3Cpath%20d%3D%27M25%20105l20-20M90%2095l15-15%2015%2015-15%2015z%27/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 140px 140px;
+            opacity: 0.85;
+        }
+        .bg-pattern-hex_grid {
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2760%27%20height%3D%27104%27%20viewBox%3D%270%200%2060%20104%27%3E%3Cpath%20d%3D%27M60%200L30%2017.3%200%200v34.6L30%2052l30-17.3V0zM30%2069.3L0%2086.6v17.4l30-17.3%2030%2017.3v-17.4L30%2069.3z%27%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.2%27%20stroke-opacity%3D%270.16%27/%3E%3C/svg%3E");
+            background-size: 60px 104px;
+            opacity: 0.85;
+        }
+        .bg-pattern-polka_dots {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            opacity: 0.9;
+        }
+        .bg-pattern-mesh_glow {
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.28) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.35) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 0, 128, 0.22) 0%, transparent 55%);
+            mix-blend-mode: screen;
+            filter: blur(35px);
+        }
 
         .wrap {{
             position: relative; z-index: 2;
@@ -1060,6 +1272,7 @@ def render_page(user: Dict[str, Any], links: List[Dict[str, Any]], reviews: List
     </style>
 </head>
 <body>
+    <div id="bgPattern" class="bg-pattern-{bg_effect}"></div>
     <canvas id="bgCanvas"></canvas>
     <canvas id="particleCanvas"></canvas>
 

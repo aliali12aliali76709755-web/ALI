@@ -34,6 +34,13 @@ THEMES = [
     (21, "🔴 SuperProfile Crimson", False),
     (22, "⚪ Kaizen Minimal", False),
     (23, "🌊 Academy Soft Pastel", False),
+    (24, "🍏 Telegram Emerald (دودلز أخضر)", False),
+    (25, "🌊 Cyan Mesh Glow (تدرج سيان ناعم)", False),
+    (26, "🌅 Sunset Coral (غروب مرجاني)", False),
+    (27, "🔮 Velvet Nebula (مخملي بنفسجي)", False),
+    (28, "🏛️ Arabian Arabesque (أرابيسك ملكي)", False),
+    (29, "🎮 Esports Cyber (سايبر جيمنج)", False),
+    (30, "☁️ Pastel Mint (باستيل هادئ)", False),
 ]
 
 
@@ -105,19 +112,37 @@ def button_styles_kb(current: str = "rounded") -> InlineKeyboardMarkup:
 
 BG_EFFECTS = [
     ("none", "🚫 بدون تأثير"),
-    ("stars", "✨ نجوم الفضاء المتلألئة"),
-    ("aurora", "🔮 تموجات أورورا الحية"),
-    ("neon", "🌐 شبكة النيون المستقبلية"),
-    ("bubbles", "🫧 فقاعات مضيئة طافية"),
+    ("tg_doodles", "✈️ نقوش تليجرام (Telegram)"),
+    ("arabic_art", "🕌 زخارف إسلامية (Arabesque)"),
+    ("contour_lines", "〰️ خطوط تضاريس (Contour)"),
+    ("gaming_icons", "🎮 أيقونات ألعاب (Gaming)"),
+    ("hex_grid", "⬡ خلايا سداسية (Honeycomb)"),
+    ("polka_dots", "⚪ نقاط ناعمة (Polka Dots)"),
+    ("mesh_glow", "🔮 تدرج ضوئي حيوي (Mesh Glow)"),
+    ("stars", "✨ نجوم الفضاء (متحرك)"),
+    ("aurora", "🌈 تموجات أورورا (متحرك)"),
+    ("neon", "🌐 شبكة النيون (متحرك)"),
+    ("bubbles", "🫧 فقاعات مضيئة (متحرك)"),
 ]
 
 
 def bg_effects_kb(current: str = "none") -> InlineKeyboardMarkup:
     rows = []
-    for eff_id, name in BG_EFFECTS:
-        prefix = "✅ " if eff_id == current else ""
-        rows.append([InlineKeyboardButton(text=f"{prefix}{name}", callback_data=f"set_bgeff:{eff_id}")])
-    rows.append([InlineKeyboardButton(text="⬅️ رجوع", callback_data="customize_back")])
+    # زر إزالة التأثير في سطر مستقل
+    none_prefix = "✅ " if current == "none" else ""
+    rows.append([InlineKeyboardButton(text=f"{none_prefix}🚫 بدون خلفية إضافية", callback_data="set_bgeff:none")])
+    
+    # باقي الخلفيات بنظام عمودين أنيق
+    other_effects = [e for e in BG_EFFECTS if e[0] != "none"]
+    for i in range(0, len(other_effects), 2):
+        pair = other_effects[i:i+2]
+        row = []
+        for eff_id, name in pair:
+            prefix = "✅ " if eff_id == current else ""
+            row.append(InlineKeyboardButton(text=f"{prefix}{name}", callback_data=f"set_bgeff:{eff_id}"))
+        rows.append(row)
+        
+    rows.append([InlineKeyboardButton(text="⬅️ رجوع للتخصيص المتقدم", callback_data="customize_back")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
