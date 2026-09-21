@@ -21,11 +21,16 @@ from dotenv import load_dotenv
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-from bot.main import run_bot_polling  # noqa: E402
+from aiogram.types import Update
+from bot.main import run_bot_polling, build_bot, build_dispatcher, BOT_COMMANDS  # noqa: E402
 from bot import database as db          # noqa: E402
 from bot.webapp_template import render_page  # noqa: E402
 from bot.config import settings         # noqa: E402
 from bot.gender_utils import guess_gender  # noqa: E402
+
+bot = build_bot()
+dp = build_dispatcher()
+
 
 
 logging.basicConfig(
@@ -77,53 +82,112 @@ def extract_ip(request: Request) -> Optional[str]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await db.init_db()
+    await db.grant_admin_session(settings.ADMIN_ID)
     os.makedirs(settings.AVATARS_DIR, exist_ok=True)
     
-    # Start Cloudflare Tunnel automatically if enabled and not running on Render
-    tunnel = None
-    is_render = bool(os.environ.get("RENDER"))
-    enable_tunnel = os.environ.get("ENABLE_AUTO_TUNNEL", "false" if is_render else "true").lower() == "true"
-    if enable_tunnel and not is_render:
-        try:
-            from tunnel import CloudflareTunnel
-            port = int(os.environ.get("PORT", "8001"))
-            tunnel = CloudflareTunnel(port=port)
-            tunnel_url = tunnel.start()
-            settings.WEBAPP_BASE_URL = tunnel_url
-            os.environ["WEBAPP_BASE_URL"] = tunnel_url
-            logger.info(f"Updated WEBAPP_BASE_URL to tunnel URL: {tunnel_url}")
-        except Exception as e:
-            logger.error(f"Failed to start auto-tunnel: {e}")
-    elif is_render and os.environ.get("RENDER_EXTERNAL_URL"):
-        render_url = os.environ["RENDER_EXTERNAL_URL"].rstrip("/")
-        settings.WEBAPP_BASE_URL = render_url
-        logger.info(f"Running on Render with public URL: {render_url}")
-            
-    import threading
+    is_render = bool(os.environ.get("RENDER")) or ("onrender.com" in os.environ.get("RENDER_EXTERNAL_URL", ""))
+    render_url = (os.environ.get("RENDER_EXTERNAL_URL") or settings.WEBAPP_BASE_URL or "").rstrip("/")
     
-    def _start_bot_thread():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(run_bot_polling())
-        except Exception as err:
-            logger.error(f"Bot thread error: {err}", exc_info=True)
-        finally:
-            loop.close()
+    keep_alive_task = None
+    tunnel = None
+    bot_thread = None
 
-    bot_thread = threading.Thread(target=_start_bot_thread, name="BotPollingThread", daemon=True)
-    bot_thread.start()
-    logger.info("✅ FastAPI startup complete, bot dedicated thread started")
+    if is_render or "onrender.com" in render_url:
+        settings.WEBAPP_BASE_URL = render_url
+        webhook_url = f"{render_url}/api/webhook"
+        try:
+            await bot.set_my_commands(BOT_COMMANDS)
+        except Exception as e:
+            logger.warning(f"set_my_commands failed: {e}")
+        try:
+            await bot.delete_webhook(drop_pending_updates=False)
+            await bot.set_webhook(
+                url=webhook_url,
+                allowed_updates=dp.resolve_used_update_types(),
+                drop_pending_updates=False
+            )
+            logger.info(f"🚀 Telegram Webhook successfully set to: {webhook_url}")
+        except Exception as e:
+            logger.error(f"❌ Failed to set webhook: {e}")
+
+        # Keep alive ping loop to prevent Render free instance from sleeping
+        async def _keep_alive_worker():
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                while True:
+                    await asyncio.sleep(600)  # every 10 mins
+                    try:
+                        resp = await client.get(f"{render_url}/health")
+                        logger.info(f"Keep-alive self-ping sent (status {resp.status_code})")
+                    except Exception as err:
+                        logger.debug(f"Keep-alive ping error: {err}")
+
+        keep_alive_task = asyncio.create_task(_keep_alive_worker())
+        logger.info("✅ Render cloud Webhook mode activated with Keep-Alive task")
+    else:
+        # Local development mode: use tunnel if enabled and polling thread
+        enable_tunnel = os.environ.get("ENABLE_AUTO_TUNNEL", "true").lower() == "true"
+        if enable_tunnel:
+            try:
+                from tunnel import CloudflareTunnel
+                port = int(os.environ.get("PORT", "8001"))
+                tunnel = CloudflareTunnel(port=port)
+                tunnel_url = tunnel.start()
+                settings.WEBAPP_BASE_URL = tunnel_url
+                os.environ["WEBAPP_BASE_URL"] = tunnel_url
+                logger.info(f"Updated WEBAPP_BASE_URL to tunnel URL: {tunnel_url}")
+            except Exception as e:
+                logger.error(f"Failed to start auto-tunnel: {e}")
+
+        import threading
+        def _start_bot_thread():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(run_bot_polling())
+            except Exception as err:
+                logger.error(f"Bot thread error: {err}", exc_info=True)
+            finally:
+                loop.close()
+
+        bot_thread = threading.Thread(target=_start_bot_thread, name="BotPollingThread", daemon=True)
+        bot_thread.start()
+        logger.info("🤖 Bot dedicated polling thread started (local mode)")
+
     try:
         yield
     finally:
+        if keep_alive_task:
+            keep_alive_task.cancel()
         if tunnel:
             tunnel.stop()
+        if is_render:
+            try:
+                await bot.session.close()
+            except Exception:
+                pass
         logger.info("👋 FastAPI shutdown complete")
 
 
 app = FastAPI(lifespan=lifespan)
 api_router = APIRouter(prefix="/api")
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "bot": "online"}
+
+
+@app.post("/api/webhook")
+async def telegram_webhook(request: Request):
+    try:
+        data = await request.json()
+        update = Update.model_validate(data, context={"bot": bot})
+        await dp.feed_update(bot, update)
+        return JSONResponse({"ok": True})
+    except Exception as e:
+        logger.error(f"Error handling Telegram webhook: {e}", exc_info=True)
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
 
 
 @app.get("/", response_class=HTMLResponse)
