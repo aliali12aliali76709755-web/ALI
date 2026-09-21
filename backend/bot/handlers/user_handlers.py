@@ -499,14 +499,6 @@ async def _finalize_page(message: Message, state: FSMContext,
 
     await state.clear()
 
-    if notice_limit:
-        await message.answer(
-            f"⚠️ لقد بلغت الحد الأقصى للعضوية المجانية "
-            f"(<b>{settings.FREE_LINKS_LIMIT} روابط فقط</b>).\n\n"
-            "💎 قم بالترقية إلى VIP للحصول على روابط غير محدودة وقوالب حصرية!\n"
-            f"🎁 أو ادعُ {settings.REFERRAL_TARGET} أصدقاء واحصل على VIP مجاناً لشهر كامل!"
-        )
-
     is_vip = await db.is_user_vip(user_id)
     await message.answer(
         f"🎉 <b>تم حفظ صفحتك بنجاح!</b>\nعدد الروابط: <b>{len(links)}</b>",
@@ -517,11 +509,8 @@ async def _finalize_page(message: Message, state: FSMContext,
 
 # ─────────────────────── القوالب ───────────────────────
 
-VIP_ONLY_MSG = (
-    "🔒 هذه الميزة متاحة لمستخدمي <b>VIP</b> فقط.\n\n"
-    "اضغط «⭐ ميزات VIP» لمعرفة كل ما ستحصل عليه، ثم «💎 اشتراك VIP» للترقية.\n\n"
-    f"🎁 أو ادعُ {settings.REFERRAL_TARGET} أصدقاء واحصل على VIP مجاناً لشهر كامل!"
-)
+VIP_ONLY_MSG = "🎉 <b>جميع الميزات مفتوحة ومتاحة لك مجاناً بالكامل 100%!</b>"
+
 
 
 @router.message(F.text == "🎨 القوالب")
@@ -754,8 +743,7 @@ async def cb_delete_avatar(cq: CallbackQuery):
 
 # ─────────────────────── نظام الإحالة (User side) ───────────────────────
 
-@router.message(F.text == "🎁 دعوة أصدقاء")
-@router.message(F.text == "🎁 دعوة أصدقاء (VIP مجاني)")  # توافق
+@router.message(F.text.in_({"🎁 دعوة أصدقاء", "🎁 دعوة اصدقاء", "دعوة أصدقاء", "دعوة اصدقاء", "🎁 دعوة أصدقاء (VIP مجاني)"}))
 async def user_referral(message: Message):
     await _show_referral(message)
 
@@ -769,26 +757,23 @@ async def cb_show_referral(cq: CallbackQuery):
 async def _show_referral(message: Message, override_user_id: int = None):
     user_id = override_user_id or message.from_user.id
     count = await db.get_referral_count(user_id)
-    target = settings.REFERRAL_TARGET
     share_link = f"https://t.me/{settings.BOT_USERNAME}?start=ref_{user_id}"
     
-    bar_len = 10
-    filled_normal = min(bar_len, int((count / target) * bar_len)) if target else 0
-    bar_normal = "🟩" * filled_normal + "⬜" * (bar_len - filled_normal)
-    
     text = (
-        "🎁 <b>برنامج الإحالات والهدايا من ProLink!</b> ⚡\n\n"
-        "هل تريد ترقية حسابك إلى <b>VIP مجاناً بالكامل</b> والاستمتاع بجميع الميزات الخارقة؟\n\n"
-        "💡 <b>العرض المميز:</b>\n"
-        f"لكل <b>{target} شخص حقيقي</b> يدخل البوت عبر رابطك المخصص، ستحصل تلقائياً على <b>1 شهر VIP مجاني!</b> 🎉\n\n"
-        "🎯 <b>تقدمك الحالي:</b>\n"
-        f"• عدد الإحالات المؤكدة: <b>{count}</b> / <b>{target}</b> صديق\n"
-        f"{bar_normal}\n"
-        f"• المكافأة: اشتراك VIP كامل مجاناً لمدة <b>{settings.REFERRAL_REWARD_DAYS} يوم</b>.\n\n"
-        f"🔗 <b>رابط الإحالة المخصص لك:</b>\n<code>{share_link}</code>\n\n"
-        "💡 <b>نصيحة ذهبية للنجاح:</b>\n"
-        "انسخ رابطك الآن وانشره في مجموعات تليجرام، قنواتك، أو شاركه مع أصدقائك! كل شخص حقيقي يفعل حسابه يقربك خطوة للـ VIP المجاني! 🚀\n\n"
-        "⚠️ <b>نظام مكافحة السبام والرشق:</b> لضمان نزاهة البوت، يجب على صديقك المدعو الضغط على زر \"التحقق\" عند الدخول، ويجب أن يحتوي حسابه على اسم مستخدم (Username) أو صورة شخصية كحد أدنى ليتم قبول الإحالة."
+        "🌟 <b>ادعُ أصدقاءك وانشر الفائدة للجميع!</b> 🚀\n\n"
+        "💡 <b>الدال على الخير كفاعله:</b>\n"
+        "دلّ أصدقاءك، زملاءك، وأصحاب المشاريع وصناع المحتوى على البوت لكي يستفيدوا من <b>إنشاء بروفايل احترافي وتنظيم كل روابطهم وحساباتهم مجاناً بالكامل 100%!</b> ✨\n\n"
+        "🎁 <b>لماذا ينصح بمشاركة البوت مع أصدقائك؟</b>\n"
+        "• <b>مجاني بالكامل للجميع:</b> لا يوجد أي اشتراك أو دفع، كل الميزات مفتوحة فوراً!\n"
+        "• <b>23 ثيم وقالب فاخر:</b> تصاميم عصرية تناسب كل التخصصات والأذواق.\n"
+        "• <b>روابط وصفحات غير محدودة:</b> تجميع كل وسائل التواصل في صفحة واحدة أنيقة وسريعة.\n"
+        "• <b>شارات توثيق مميزة:</b> شارات احترافية كشارات انستغرام والشارة الملكية.\n"
+        "• <b>إحصائيات دقيقة:</b> تتبع عدد الزيارات ونقرات الروابط والدول.\n\n"
+        "👥 <b>إحصائيات مشاركاتك:</b>\n"
+        f"• عدد الأصدقاء الذين استفادوا وانضموا عبرك: <b>{count}</b> صديق 🎉\n\n"
+        f"🔗 <b>رابط الدعوة والمشاركة الخاص بك:</b>\n"
+        f"<code>{share_link}</code>\n\n"
+        "📲 <b>انشر رابطك الآن</b> في مجموعاتك وقنواتك وشاركه مع أصدقائك لتعم الفائدة بالضغط على الزر أدناه 👇"
     )
     await message.answer(text, reply_markup=referral_kb(share_link))
 
@@ -801,75 +786,39 @@ async def my_account(message: Message):
     if not user:
         await message.answer("لم يتم العثور على حسابك. أرسل /start")
         return
-    is_vip = await db.is_user_vip(message.from_user.id)
     ref_count = user.get("referral_count") or 0
-    exp = user.get("vip_expires")
     unlocked = await db.get_unlocked_themes(message.from_user.id)
     text = (
-        "ℹ️ <b>حسابي</b>\n\n"
+        "ℹ️ <b>معلومات حسابي</b>\n\n"
         f"👤 الاسم: <b>{user.get('full_name') or '-'}</b>\n"
-        f"🆔 آيدي: <code>{user['user_id']}</code>\n"
+        f"🆔 الآيدي: <code>{user['user_id']}</code>\n"
         f"🔖 اليوزر: {('@' + user['username']) if user.get('username') else '-'}\n"
-        f"💎 الحالة: <b>{'VIP ✨' if is_vip else 'مجاني'}</b>\n"
-        f"⏳ ينتهي VIP: <code>{exp[:10] if exp else '-'}</code>\n"
-        f"🎁 عدد إحالاتك: <b>{ref_count}</b> / {settings.REFERRAL_TARGET}\n"
-        f"🎨 القالب الحالي: <b>{user.get('theme') or 0}</b>\n"
-        f"👑 قوالب بريميوم مفتوحة: <b>{len(unlocked)}</b>\n"
-        f"🖼 صورة شخصية: {'نعم ✅' if user.get('avatar_path') else 'لا'}\n"
+        "✨ حالة الحساب: <b>مفعّل بجميع الميزات مجاناً 100% 🌟</b>\n"
+        f"👥 عدد الأصدقاء المستفيدين عبرك: <b>{ref_count}</b> صديق 🎉\n"
+        f"🎨 رقم القالب الحالي: <b>{user.get('theme') or 0}</b>\n"
+        f"🖼 الصورة الشخصية: {'مفعّلة ✅' if user.get('avatar_path') else 'غير محددة'}\n"
     )
     await message.answer(text)
 
 
-# ─────────────────────── ميزات VIP (شرح كامل) ───────────────────────
+# ─────────────────────── الميزات المتاحة (شرح كامل) ───────────────────────
 
-@router.message(F.text == "⭐ ميزات VIP")
+@router.message(F.text.in_({"⭐ الميزات", "⭐ ميزات البوت", "⭐ ميزات VIP", "الميزات"}))
 async def show_vip_features(message: Message):
-    is_vip = await db.is_user_vip(message.from_user.id)
-    if is_vip:
-        user = await db.get_user(message.from_user.id)
-        exp_str = user.get("vip_expires")[:10] if (user and user.get("vip_expires")) else "مدى الحياة 🔥"
-        header = (
-            f"✨ <b>أنت بالفعل مشترك VIP</b> — ينتهي في <code>{exp_str}</code>\n\n"
-            "هذه كل الميزات التي تستفيد منها:\n\n"
-        )
-    else:
-        header = ""
-    await message.answer(header + VIP_FEATURES_TEXT, reply_markup=subscription_kb() if not is_vip else None)
+    header = "✨ <b>جميع ميزات المنصة مفتوحة ومتاحة لك مجاناً بالكامل 100%!</b>\n\n"
+    await message.answer(header + VIP_FEATURES_TEXT)
 
 
 @router.callback_query(F.data == "cmd_vip_cb")
 async def cb_cmd_vip_from_gate(cq: CallbackQuery):
-    is_vip = await db.is_user_vip(cq.from_user.id)
-    if is_vip:
-        user = await db.get_user(cq.from_user.id)
-        exp_str = user.get("vip_expires")[:10] if (user and user.get("vip_expires")) else "مدى الحياة 🔥"
-        header = f"✨ <b>أنت بالفعل مشترك VIP</b> — ينتهي في <code>{exp_str}</code>\n\n"
-    else:
-        header = ""
-    await cq.message.answer(header + VIP_FEATURES_TEXT, reply_markup=subscription_kb() if not is_vip else None)
+    header = "✨ <b>جميع ميزات المنصة مفتوحة ومتاحة لك مجاناً بالكامل 100%!</b>\n\n"
+    await cq.message.answer(header + VIP_FEATURES_TEXT)
     await cq.answer()
 
 
 @router.callback_query(F.data == "cmd_ref_cb")
 async def cb_cmd_ref_from_gate(cq: CallbackQuery):
-    user_id = cq.from_user.id
-    user = await db.get_user(user_id)
-    count = (user.get("referral_count") or 0) if user else 0
-    target = settings.REFERRAL_TARGET
-    share_link = f"https://t.me/{settings.BOT_USERNAME}?start=ref_{user_id}"
-    
-    text = (
-        "🎁 <b>برنامج الإحالات والهدايا من ProLink!</b> ⚡\n\n"
-        "هل تريد ترقية حسابك إلى <b>VIP مجاناً بالكامل</b> والاستمتاع بجميع الميزات الخارقة؟\n\n"
-        "💡 <b>العرض المميز:</b>\n"
-        f"لكل <b>{target} شخص حقيقي</b> يدخل البوت عبر رابطك المخصص، ستحصل تلقائياً على <b>1 شهر VIP مجاني!</b> 🎉\n\n"
-        "🎯 <b>تقدمك الحالي:</b>\n"
-        f"• عدد الإحالات المؤكدة: <b>{count}</b> / <b>{target}</b> صديق\n"
-        f"• المكافأة: اشتراك VIP كامل مجاناً لمدة <b>{settings.REFERRAL_REWARD_DAYS} يوم</b>.\n\n"
-        f"🔗 <b>رابط الإحالة الخاص بك:</b>\n<code>{share_link}</code>\n\n"
-        "⚠️ <b>نظام مكافحة السبام والرشق:</b> لضمان نزاهة البوت، يجب على صديقك المدعو الضغط على زر \"التحقق\" عند الدخول، ويجب أن يحتوي حسابه على اسم مستخدم (Username) أو صورة شخصية كحد أدنى ليتم قبول الإحالة."
-    )
-    await cq.message.answer(text, reply_markup=referral_kb(share_link))
+    await _show_referral(cq.message, override_user_id=cq.from_user.id)
     await cq.answer()
 
 
@@ -913,13 +862,12 @@ async def cmd_help(message: Message):
         "• /cancel - إلغاء العملية الحالية\n"
         "• /edit - إنشاء / تعديل صفحتي\n"
         "• /page - معاينة صفحتي\n"
-        "• /qr - كود QR الخاص بي (VIP)\n"
-        "• /vip - عرض خطط الاشتراك\n"
-        "• /features - كل ميزات VIP\n"
-        "• /invite - رابط دعوة الأصدقاء\n"
-        "• /stats - إحصائياتي (VIP)\n"
-        "• /themes - القوالب\n"
-        "• /avatar - الصورة الشخصية (VIP)\n"
+        "• /qr - كود QR لصفحتي\n"
+        "• /features - استعراض ميزات المنصة\n"
+        "• /invite - دعوة الأصدقاء ونشر الفائدة\n"
+        "• /stats - إحصائيات الزيارات\n"
+        "• /themes - القوالب والتصاميم\n"
+        "• /avatar - الصورة الشخصية\n"
         "• /account - معلومات حسابي\n"
         "• /contact - تواصل مع الدعم الفني\n"
     )

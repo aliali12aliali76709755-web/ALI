@@ -510,10 +510,10 @@ def force_sub_kb(channels: list) -> InlineKeyboardMarkup:
 # ─────────────────────────── الإحالة ───────────────────────────
 
 def referral_kb(share_url: str) -> InlineKeyboardMarkup:
-    share_text = "🌟 انضم إلى هذا البوت وابدأ إنشاء صفحتك الاحترافية!"
+    share_text = "🔥 أنشئ صفحة بروفايلك ونظّم كل روابطك وحساباتك في رابط واحد بتصاميم خرافية ومجانية بالكامل 100%! جرّب البوت الآن واستفد منه:"
     tg_share = f"https://t.me/share/url?url={share_url}&text={share_text}"
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📤 مشاركة رابط الإحالة", url=tg_share)],
+        [InlineKeyboardButton(text="📲 شارك البوت مع أصدقائك الآن", url=tg_share)],
     ])
 
 
